@@ -26,7 +26,7 @@ from replacer import RepeatReplacer
 from terminal_colors import Tcolors
 
 DEBUG = False
-VERBOSE = False
+VERBOSE = True
 
 class Sentiment:
     """
@@ -70,10 +70,11 @@ class Sentiment:
                            'neutral':{'count' : 0, 'score' : 0, 'nscore' : 0},
                            'negative':{'count' : 0, 'score' : 0, 'nscore' : 0}}
 
-                print
-                print Tcolors.ACT + " Checking block of text:"
-                for i, sentence in enumerate(sentences):
-                    print "[" + str(i+1) + "] " + sentence
+                if VERBOSE:
+                    print
+                    print Tcolors.ACT + " Checking block of text:"
+                    for i, sentence in enumerate(sentences):
+                        print "[" + str(i+1) + "] " + sentence
                 for i, sentence in enumerate(sentences):
                     # Proceed to subjectivity classification (bootstrapping procedure).
                     # (This step could be skipped in case you deal with subjective sentences only.)
@@ -128,27 +129,30 @@ class Sentiment:
                         results[sentiment]['score'] += score
                         results[sentiment]['count'] += 1
 
-                print
-                print Tcolors.ACT + " Overall sentiment analysis:"
-                print Tcolors.BGH
-                print " Parts: ", len(sentences)
-                print " Sentiments: ", sentiments
-                print " Scores: ", scores
-                print " Results: ", "},\n\t    ".join((str)(results).split("}, "))
-                print Tcolors.C
+                if VERBOSE:
+                    print
+                    print Tcolors.ACT + " Overall sentiment analysis:"
+                    print Tcolors.BGH
+                    print " Parts: ", len(sentences)
+                    print " Sentiments: ", sentiments
+                    print " Scores: ", scores
+                    print " Results: ", "},\n\t    ".join((str)(results).split("}, "))
+                    print Tcolors.C
 
                 pcount = results['positive']['count']
                 ncount = results['negative']['count']
                 total = len(sentences)
-                print Tcolors.BG
-                print " subjective".ljust(16,"-") + "> %.2f" % ((float)(pcount + ncount)*100 / total) + "%"
-                print " objective".ljust(16,"-") + "> %.2f" % (100 - ((float)(pcount + ncount)*100 / total)) + "%"
-                print Tcolors.C
-                print Tcolors.BGGRAY
-                for sense in results.keys():
-                    count = results[sense]['count']
-                    percentage = (float)(count) * 100 / (len(sentences))
-                    print " " +sense.ljust(15,"-")+"> %.2f" % (percentage) + "%"
+
+                if VERBOSE:
+                    print Tcolors.BG
+                    print " subjective".ljust(16,"-") + "> %.2f" % ((float)(pcount + ncount)*100 / total) + "%"
+                    print " objective".ljust(16,"-") + "> %.2f" % (100 - ((float)(pcount + ncount)*100 / total)) + "%"
+                    print Tcolors.C
+                    print Tcolors.BGGRAY
+                    for sense in results.keys():
+                        count = results[sense]['count']
+                        percentage = (float)(count) * 100 / (len(sentences))
+                        print " " +sense.ljust(15,"-")+"> %.2f" % (percentage) + "%"
 
                 print Tcolors.C
                 ssum = sum(scores)
@@ -160,15 +164,15 @@ class Sentiment:
 
                 # Print total sentiment score and normalized sentiment score
                 if ssum > 0 and pos:
-                    print Tcolors.RES + Tcolors.OKGREEN + " positive" + confidence + Tcolors.C
+                    if VERBOSE: print Tcolors.RES + Tcolors.OKGREEN + " positive" + confidence + Tcolors.C
                     final_sent = "positive"
                 elif ssum == 0:
-                    print Tcolors.RES + Tcolors.OKGREEN +  " neutral" + confidence + Tcolors.C
+                    if VERBOSE: print Tcolors.RES + Tcolors.OKGREEN +  " neutral" + confidence + Tcolors.C
                     final_sent = "neutral"
                 else:
-                    print Tcolors.RES + Tcolors.OKGREEN +  " negative" + confidence + Tcolors.C
+                    if VERBOSE: print Tcolors.RES + Tcolors.OKGREEN +  " negative" + confidence + Tcolors.C
                     final_sent = "negative"
-                print Tcolors.C
+                if VERBOSE: print Tcolors.C
 
                 # Store results
                 total_result_hash = {'sentences' : sentences,
@@ -219,16 +223,6 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         sentiment.analyze([sys.argv[1]])
     else:
-        # sentiment.analyze([u"I was blown away by some of the comments here posted by people who is either uneducated, ignorant, self-righteous or all-of-the-above...I'm irritated and saddened as I read these \"finger-pointing\" or \"I'm right and you're wrong\" type of posts! Grow up folks! You're not in grade school...learn to embrace what is positive and move forward to do what is right... I have to give much love and respect to Ronny...your work is AMAZING!!! You cannot fathom how good I feel after I watched this video...regardless of history, politics, or whatever forces that makes what the mid-east today...for what you did and many of the followers in Iran and Palestine ...I BELIEVE TOMORROW WILL BE BETTER!!!!!! My name is Christopher Lee, I'm a nurse in Los Angeles and I {HEART} YOU ALL (especially to all of you beautiful and sweet ladies across the way)!!!!!"])
-        result = sentiment.analyze(['''Distributed denial-of-service attacks, DDoS for short, are a common attack felt by businesses and normal people. When someone preforms a DDoS they are usually trying to deny the person or business traffic or even the ability to use the internet. That's because a DDoS typically tries to flood your network so that everything slows to a crawl and legitimate traffic can't get threw. These attacks are a threat to every business, especially those with a website or any means of taking in information from outside sources. When Blizzard Entertainment launched their newset game Overwatch they became under attack by DDoS bring there launch servers down restricting players from playing the game. This was a major setback for the release for this game, for all the players have to be connected an using a server to play the game. Which was impossible after during the DDoS. While Blizzard never specifically told everyone how they warded off the DDoS attack it can be assumed they used methods such as rate-limiting through routers or switches using Access control list capabilities. The problem with DDoS attacks is that they usually overload you with legitimate content but bad intent. Making it all the more difficult to discern bad traffic from good traffic. Bibliography McDowell, Mindi. (2009, November 4). Understanding denial-of-service attacks. Retrieved April 3, 2017, from https://www.us-cert.gov/ncas/tips/ST04-015'''])
-        total = len(result['sentences'])
-        n_positive = result['results']['positive']['count']
-        n_negative = result['results']['negative']['count']
-        n_neutral = result['results']['neutral']['count']
-        subjectivity = float(n_positive + n_negative) / total
-        objectivity = float(n_neutral) / total
-        print subjectivity
-
-
+        sentiment.analyze([u"I was blown away by some of the comments here posted by people who is either uneducated, ignorant, self-righteous or all-of-the-above...I'm irritated and saddened as I read these \"finger-pointing\" or \"I'm right and you're wrong\" type of posts! Grow up folks! You're not in grade school...learn to embrace what is positive and move forward to do what is right... I have to give much love and respect to Ronny...your work is AMAZING!!! You cannot fathom how good I feel after I watched this video...regardless of history, politics, or whatever forces that makes what the mid-east today...for what you did and many of the followers in Iran and Palestine ...I BELIEVE TOMORROW WILL BE BETTER!!!!!! My name is Christopher Lee, I'm a nurse in Los Angeles and I {HEART} YOU ALL (especially to all of you beautiful and sweet ladies across the way)!!!!!"])
 
 

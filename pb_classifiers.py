@@ -63,9 +63,9 @@ class PbSubj:
             display = value['display']
             pattern_type = value['type']
             try:
-            	pos_in_sentence = sentence.find(display)
+                pos_in_sentence = sentence.find(display)
             except:
-            	pos_in_sentence = -1
+                pos_in_sentence = -1
             	
             if pos_in_sentence > -1:
                 matched_pattern = value
@@ -143,7 +143,7 @@ class PbSubj:
                 self.ss_patterns[pattern] = self.learned_patterns[pattern]
             # delete some patterns with low frequency and probability for efficiency
             elif freq > 5 and freq < ((self.t1_threshold*3) / 4):
-            	del(self.learned_patterns[pattern])
+                del(self.learned_patterns[pattern])
             
         sorted_ss = sorted(self.ss_patterns.iteritems(),key=lambda x: x[1]['prob'], reverse=True)
         self.sorted_ss_patterns = sorted_ss 
@@ -153,7 +153,7 @@ class PbSubj:
             if self.debug: print title + "------------> " + pbs
         if self.debug: print
         if len(sorted_ss) > self.pl_threshold:
-        	self.t1_threshold += 1
+            self.t1_threshold += 1
         
     def train(self, learned_patterns):
         """
