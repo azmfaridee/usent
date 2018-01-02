@@ -26,7 +26,8 @@ from replacer import RepeatReplacer
 from terminal_colors import Tcolors
 
 DEBUG = False
-VERBOSE = True
+VERBOSE = False
+# VERBOSE = True
 
 class Sentiment:
     """
@@ -154,7 +155,7 @@ class Sentiment:
                         percentage = (float)(count) * 100 / (len(sentences))
                         print " " +sense.ljust(15,"-")+"> %.2f" % (percentage) + "%"
 
-                print Tcolors.C
+                if VERBOSE: print Tcolors.C
                 ssum = sum(scores)
                 confidence = " (%.2f, %.2f)" % (ssum,sum(nscores))
                 final_sent = ""
